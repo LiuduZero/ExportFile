@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      type="text/javascript"
+      lang="javascript"
+      src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="./src/utils.js"></script>
+    <script type="text/javascript" src="./src/mock.js"></script>
+  </head>
+  <body>
+    <p>
+      <button id="preview">预览</button>
+      <button id="export1">通过表格导出</button>
+      <button id="export2">通过数据导出</button>
+      <button id="export3">通过数据导出 - 单元格自定义</button>
+    </p>
+
+    <script type="text/javascript" src="./src/createTable.js"></script>
+    <script type="text/javascript" src="./src/createData.js"></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        const previewBtn = document.querySelector('#preview')
+        const exportBtn = document.querySelector('#export1')
+        const exportBtn2 = document.querySelector('#export2')
+        const exportBtn3 = document.querySelector('#export3')
+
+        previewBtn.addEventListener('click', previewHandler)
+        exportBtn.addEventListener('click', exportHandler)
+        exportBtn2.addEventListener('click', exportHandler2)
+        exportBtn3.addEventListener('click', exportHandler3)
+
+        // 模拟数据 - ./src/mock.js
+        const columns = _columns_
+        const dataSource = _dataSource_
+
+        // 预览
+        function previewHandler() {
+          const table = createTable(columns, dataSource)
+          document.body.appendChild(table)
+        }
+
+        // 导出 - 通过表格导出
+        function exportHandler() {
+          let table = document.querySelector('table')
+
+          // createTable - ./src/createTable.js
+          if (!table) table = createTable(columns, dataSource)
+
+          const wb = XLSX.utils.table_to_book(table)
+          XLSX.writeFile(wb, `${Date.now()}.xlsx`)
+        }
+
+        // 导出 - 通过数据导出
+        function exportHandler2() {
+          // exportByData - ./src/createData.js
+          exportByData(columns, dataSource)
+        }
+
+        // 导出 - 通过数据导出
+        function exportHandler3() {
+          // exportByData - ./src/createData.js
+          exportByData(columns, dataSource, {
+            cellRender: (v, row, col) => '-' + v + '-',
+          })
+        }
+      }
+    </script>
+  </body>
+</html>
